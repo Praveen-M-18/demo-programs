@@ -1,0 +1,287 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Program 4 - User Login using PHP and MySQL</title>
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#0b1120;color:#f1f5f9;line-height:1.6}
+header{padding:22px 7%;background:#0f172a;border-bottom:1px solid #26354d}
+header a{color:#60a5fa;text-decoration:none;font-weight:bold}
+main{max-width:950px;margin:auto;padding:35px 20px 60px}
+h1{font-size:clamp(25px,4vw,36px);margin-bottom:8px}
+.subtitle{color:#94a3b8;margin-bottom:30px}
+.file-section{margin:25px 0;border:1px solid #29384f;border-radius:12px;overflow:hidden;background:#111c30}
+.file-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;background:#17243a;border-bottom:1px solid #29384f}
+.file-name{font-weight:bold;color:#bfdbfe}
+.copy-btn{padding:8px 13px;background:#2563eb;color:white;border:0;border-radius:7px;cursor:pointer}
+.copy-btn:hover{background:#1d4ed8}
+pre{margin:0;padding:20px;overflow-x:auto;color:#dbeafe;font:13px/1.7 Consolas,monospace;white-space:pre;tab-size:4}
+.notes{margin-top:35px;padding:24px;border:1px solid #36506f;border-radius:12px;background:#111c30}
+.notes h2{color:#93c5fd;margin-top:0}
+.notes h3{color:#bfdbfe;margin-top:22px}
+.notes li{margin:10px 0;color:#cbd5e1}
+.notes code{color:#93c5fd;overflow-wrap:anywhere}
+.back-link{display:inline-block;margin-top:30px;padding:10px 16px;border:1px solid #334155;border-radius:8px;color:#bfdbfe;text-decoration:none}
+.back-link:hover{background:#17243a}
+@media(max-width:600px){main{padding:25px 14px 45px}pre{padding:14px;font-size:12px}}
+</style>
+</head>
+
+<body>
+<header><a href="index.html">← Back to All Programs</a></header>
+
+<main>
+<h1>04. User Login using PHP and MySQL</h1>
+<p class="subtitle">A basic login system with session management, a protected dashboard, and logout functionality.</p>
+
+<section class="file-section">
+<div class="file-header">
+<span class="file-name">index.php</span>
+<button class="copy-btn" data-copy="code1">📋 Copy code</button>
+</div>
+<pre><code id="code1">&lt;?php
+session_start();
+include("db.php");
+
+$error = "";
+
+if (isset($_POST["login"])) {
+    $username = $_POST["username"];
+    $password = $_POST["password"];
+
+    $sql = "SELECT * FROM logtbl WHERE username = ? AND password = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+
+    mysqli_stmt_bind_param($stmt, "ss", $username, $password);
+    mysqli_stmt_execute($stmt);
+
+    $result = mysqli_stmt_get_result($stmt);
+
+    if (mysqli_num_rows($result) == 1) {
+        $_SESSION["username"] = $username;
+        header("Location: dashboard.php");
+        exit();
+    } else {
+        $error = "Invalid username or password";
+    }
+
+    mysqli_stmt_close($stmt);
+}
+?&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Login Form&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;h2&gt;User Login&lt;/h2&gt;
+
+&lt;?php if ($error !== ""): ?&gt;
+    &lt;p&gt;&lt;?php echo htmlspecialchars($error); ?&gt;&lt;/p&gt;
+&lt;?php endif; ?&gt;
+
+&lt;form method="post"&gt;
+    &lt;label for="username"&gt;Username:&lt;/label&gt;
+    &lt;input type="text" id="username" name="username" required&gt;
+
+    &lt;br&gt;&lt;br&gt;
+
+    &lt;label for="password"&gt;Password:&lt;/label&gt;
+    &lt;input type="password" id="password" name="password" required&gt;
+
+    &lt;br&gt;&lt;br&gt;
+
+    &lt;input type="submit" name="login" value="Login"&gt;
+&lt;/form&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</section>
+
+<section class="file-section">
+<div class="file-header">
+<span class="file-name">db.php</span>
+<button class="copy-btn" data-copy="code2">📋 Copy code</button>
+</div>
+<pre><code id="code2">&lt;?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "pro4";
+
+$conn = mysqli_connect(
+    $servername,
+    $username,
+    $password,
+    $dbname
+);
+
+if (!$conn) {
+    die("Database connection failed: " . mysqli_connect_error());
+}
+?&gt;</code></pre>
+</section>
+
+<section class="file-section">
+<div class="file-header">
+<span class="file-name">dashboard.php</span>
+<button class="copy-btn" data-copy="code3">📋 Copy code</button>
+</div>
+<pre><code id="code3">&lt;?php
+session_start();
+
+if (!isset($_SESSION["username"])) {
+    header("Location: index.php");
+    exit();
+}
+?&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Dashboard&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+    &lt;h1&gt;Dashboard Page&lt;/h1&gt;
+
+    &lt;p&gt;Welcome,
+        &lt;?php echo htmlspecialchars($_SESSION["username"]); ?&gt;
+    &lt;/p&gt;
+
+    &lt;br&gt;
+
+    &lt;a href="logout.php"&gt;Logout&lt;/a&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</section>
+
+<section class="file-section">
+<div class="file-header">
+<span class="file-name">logout.php</span>
+<button class="copy-btn" data-copy="code4">📋 Copy code</button>
+</div>
+<pre><code id="code4">&lt;?php
+session_start();
+
+$_SESSION = [];
+session_destroy();
+
+header("Location: index.php");
+exit();
+?&gt;</code></pre>
+</section>
+
+<section class="notes">
+<h2>📝 Important Notes — How to Run</h2>
+
+<h3>1. Start XAMPP</h3>
+<ul>
+<li>Open the XAMPP Control Panel.</li>
+<li>Click <strong>Start</strong> for Apache and MySQL.</li>
+<li>Make sure both services are running.</li>
+</ul>
+
+<h3>2. Create the project folder</h3>
+<ul>
+<li>Open <code>C:\xampp\htdocs</code>.</li>
+<li>Create a folder named <code>LoginSystem</code>.</li>
+<li>Save all four PHP files inside that folder.</li>
+</ul>
+
+<h3>3. Create the database and table</h3>
+<ul>
+<li>Open <code>http://localhost/phpmyadmin</code>.</li>
+<li>Choose the SQL tab and execute these commands.</li>
+</ul>
+
+<div class="file-section">
+<div class="file-header">
+<span class="file-name">SQL — Run in phpMyAdmin</span>
+<button class="copy-btn" data-copy="sqlCode">📋 Copy SQL</button>
+</div>
+<pre><code id="sqlCode">CREATE DATABASE pro4;
+
+USE pro4;
+
+CREATE TABLE logtbl (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
+);
+
+INSERT INTO logtbl (username, password)
+VALUES ('student', '1234');</code></pre>
+</div>
+
+<h3>4. Run the login system</h3>
+<ul>
+<li>Keep Apache and MySQL running.</li>
+<li>Open <code>http://localhost/LoginSystem/index.php</code>.</li>
+<li>Enter the test credentials below.</li>
+<li>Click Login. The dashboard should display the username.</li>
+<li>Click Logout to return to the login page.</li>
+</ul>
+
+<h3>5. Test login credentials</h3>
+<ul>
+<li><strong>Username:</strong> <code>student</code></li>
+<li><strong>Password:</strong> <code>1234</code></li>
+</ul>
+
+<h3>6. Important reminders</h3>
+<ul>
+<li>Use the exact database name <code>pro4</code> and table name <code>logtbl</code>.</li>
+<li>Do not add HTML or echo output before the redirect headers in PHP files.</li>
+<li><code>session_start()</code> must run before accessing session variables.</li>
+<li>The dashboard checks whether a user session exists before displaying its content.</li>
+<li>This lab example stores plain-text passwords for simplicity. Real applications should store password hashes using <code>password_hash()</code> and verify them using <code>password_verify()</code>.</li>
+<li>The login query uses a prepared statement to help prevent SQL injection.</li>
+</ul>
+</section>
+
+<a href="index.html" class="back-link">← Back to Home Page</a>
+</main>
+
+<script>
+document.querySelectorAll(".copy-btn").forEach(function(button) {
+    button.addEventListener("click", async function() {
+        const code = document.getElementById(button.dataset.copy).textContent;
+
+        try {
+            await navigator.clipboard.writeText(code);
+            button.textContent = "✓ Copied!";
+        } catch (error) {
+            const textarea = document.createElement("textarea");
+            textarea.value = code;
+            textarea.style.position = "fixed";
+            textarea.style.opacity = "0";
+            document.body.appendChild(textarea);
+            textarea.select();
+
+            const copied = document.execCommand("copy");
+            textarea.remove();
+            button.textContent = copied ? "✓ Copied!" : "Copy failed";
+        }
+
+        setTimeout(function() {
+            button.textContent = button.dataset.copy === "sqlCode"
+                ? "📋 Copy SQL"
+                : "📋 Copy code";
+        }, 2000);
+    });
+});
+</script>
+</body>
+</html>

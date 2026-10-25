@@ -1,0 +1,254 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Program 7 - Employee Information Portal</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial;background:#0b1120;color:#f1f5f9;line-height:1.6}
+header{padding:20px 7%;background:#0f172a;border-bottom:1px solid #29384f}header a{color:#60a5fa;text-decoration:none}
+main{max-width:950px;margin:auto;padding:30px 18px 55px}h1{font-size:clamp(25px,4vw,35px)}.subtitle{color:#94a3b8}
+.file{margin:24px 0;border:1px solid #29384f;border-radius:10px;overflow:hidden;background:#111c30}
+.filehead{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 16px;background:#17243a}.filename{font-weight:bold;color:#bfdbfe}
+button{padding:8px 12px;border:0;border-radius:6px;background:#2563eb;color:white;cursor:pointer}
+pre{margin:0;padding:18px;overflow-x:auto;white-space:pre;color:#dbeafe;font:13px/1.7 Consolas,monospace}
+.notes{margin-top:32px;padding:22px;border:1px solid #36506f;border-radius:10px;background:#111c30}.notes h2{color:#93c5fd}.notes h3{color:#bfdbfe;margin-top:22px}.notes li{margin:9px 0;color:#cbd5e1}
+code{color:#93c5fd;overflow-wrap:anywhere}.back{display:inline-block;margin-top:24px;color:#93c5fd;text-decoration:none}
+</style>
+</head>
+<body>
+<header><a href="index.html">← Back to All Programs</a></header>
+<main>
+<h1>07. Employee Information Portal using Node.js, Express.js and MongoDB</h1>
+<p class="subtitle">Add employee details, view employee records, and delete records using MongoDB.</p>
+
+<section class="file">
+<div class="filehead"><span class="filename">index.html</span><button class="copy" data-target="c1">📋 Copy code</button></div>
+<pre><code id="c1">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Employee Portal&lt;/title&gt;
+    &lt;style&gt;
+        body{font-family:Arial;background:#f1f5f9;margin:40px;color:#1e293b}
+        form{max-width:350px;background:white;padding:22px;border-radius:10px}
+        input{width:100%;padding:9px;margin:7px 0 14px;box-sizing:border-box}
+        button{background:#2563eb;color:white;padding:10px;border:0;border-radius:5px;cursor:pointer}
+        a{color:#2563eb}
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h2&gt;Employee Registration&lt;/h2&gt;
+    &lt;form action="/add" method="post"&gt;
+        &lt;label for="empid"&gt;Employee ID&lt;/label&gt;
+        &lt;input type="text" id="empid" name="empid"
+            placeholder="Enter employee ID" required&gt;
+
+        &lt;label for="name"&gt;Employee Name&lt;/label&gt;
+        &lt;input type="text" id="name" name="name"
+            placeholder="Enter employee name" required&gt;
+
+        &lt;label for="department"&gt;Department&lt;/label&gt;
+        &lt;input type="text" id="department" name="department"
+            placeholder="Enter department" required&gt;
+
+        &lt;button type="submit"&gt;Add Employee&lt;/button&gt;
+    &lt;/form&gt;
+    &lt;br&gt;
+    &lt;a href="/view"&gt;View Employees&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</section>
+
+<section class="file">
+<div class="filehead"><span class="filename">server.js</span><button class="copy" data-target="c2">📋 Copy code</button></div>
+<pre><code id="c2">const express = require("express");
+const mongoose = require("mongoose");
+const app = express();
+
+app.use(express.urlencoded({ extended: true }));
+
+const employeeSchema = new mongoose.Schema({
+    empid: String,
+    name: String,
+    department: String
+});
+
+const Employee = mongoose.model("Employee", employeeSchema);
+
+app.get("/", (req, res) => {
+    res.sendFile(__dirname + "/index.html");
+});
+
+app.post("/add", async (req, res) => {
+    try {
+        await Employee.create({
+            empid: req.body.empid,
+            name: req.body.name,
+            department: req.body.department
+        });
+        res.redirect("/view");
+    } catch (err) {
+        res.status(500).send("Error adding employee: " + err.message);
+    }
+});
+
+app.get("/view", async (req, res) => {
+    try {
+        const employees = await Employee.find();
+
+        const escapeHTML = (value) => String(value).replace(/[&amp;&lt;&gt;"']/g, char => ({
+            "&amp;": "&amp;amp;",
+            "&lt;": "&amp;lt;",
+            "&gt;": "&amp;gt;",
+            '"': "&amp;quot;",
+            "'": "&amp;#39;"
+        })[char]);
+
+        let result = `&lt;!DOCTYPE html&gt;
+        &lt;html&gt;&lt;head&gt;&lt;title&gt;Employees&lt;/title&gt;&lt;/head&gt;
+        &lt;body&gt;&lt;h2&gt;Employee Details&lt;/h2&gt;
+        &lt;table border="1" cellpadding="10"&gt;
+        &lt;tr&gt;&lt;th&gt;Employee ID&lt;/th&gt;
+        &lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Department&lt;/th&gt;&lt;th&gt;Action&lt;/th&gt;&lt;/tr&gt;`;
+
+        employees.forEach(emp => {
+            result += `&lt;tr&gt;
+            &lt;td&gt;${escapeHTML(emp.empid)}&lt;/td&gt;
+            &lt;td&gt;${escapeHTML(emp.name)}&lt;/td&gt;
+            &lt;td&gt;${escapeHTML(emp.department)}&lt;/td&gt;
+            &lt;td&gt;&lt;a href="/delete/${emp._id}"&gt;Delete&lt;/a&gt;&lt;/td&gt;
+            &lt;/tr&gt;`;
+        });
+
+        result += `&lt;/table&gt;&lt;br&gt;&lt;a href="/"&gt;Back&lt;/a&gt;&lt;/body&gt;&lt;/html&gt;`;
+        res.send(result);
+    } catch (err) {
+        res.status(500).send("Error retrieving employees: " + err.message);
+    }
+});
+
+app.get("/delete/:id", async (req, res) => {
+    try {
+        if (!mongoose.isValidObjectId(req.params.id)) {
+            return res.status(400).send("Invalid employee ID");
+        }
+        await Employee.findByIdAndDelete(req.params.id);
+        res.redirect("/view");
+    } catch (err) {
+        res.status(500).send("Error deleting employee: " + err.message);
+    }
+});
+
+mongoose.connect("mongodb://127.0.0.1:27017/EmployeeDB")
+    .then(() => {
+        console.log("Connected to MongoDB");
+        app.listen(3000, () => {
+            console.log("Server running at http://localhost:3000");
+        });
+    })
+    .catch(err => {
+        console.error("MongoDB connection failed:", err.message);
+    });</code></pre>
+</section>
+
+<section class="file">
+<div class="filehead"><span class="filename">package.json</span><button class="copy" data-target="c3">📋 Copy code</button></div>
+<pre><code id="c3">{
+  "name": "employee-information-portal",
+  "version": "1.0.0",
+  "description": "Employee Information Portal using Express and MongoDB",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "mongoose": "^8.8.4"
+  }
+}</code></pre>
+</section>
+
+<section class="file">
+<div class="filehead"><span class="filename">package-lock.json</span><button class="copy" data-target="c4">📋 Copy example</button></div>
+<pre><code id="c4">{
+  "name": "employee-information-portal",
+  "version": "1.0.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {}
+}</code></pre>
+</section>
+
+<section class="notes">
+<h2>📝 Important Notes — How to Run</h2>
+<h3>1. Install the requirements</h3>
+<ul>
+<li>Install Node.js from <code>https://nodejs.org/</code>.</li>
+<li>Install MongoDB Community Server and make sure the MongoDB service is running locally.</li>
+<li>Check Node.js and npm by running <code>node -v</code> and <code>npm -v</code>.</li>
+</ul>
+
+<h3>2. Create the project</h3>
+<ul>
+<li>Create a folder named <code>EmployeePortal</code>.</li>
+<li>Save <code>index.html</code>, <code>server.js</code>, and <code>package.json</code> inside it.</li>
+<li>You do not need to create <code>package-lock.json</code> manually. npm creates the actual lock file when you install the dependencies.</li>
+</ul>
+
+<h3>3. Install the packages</h3>
+<div class="file">
+<div class="filehead"><span class="filename">Terminal commands</span><button class="copy" data-target="c5">📋 Copy commands</button></div>
+<pre><code id="c5">npm install
+npm ls express mongoose</code></pre>
+</div>
+
+<h3>4. Start the application</h3>
+<div class="file">
+<div class="filehead"><span class="filename">Run command</span><button class="copy" data-target="c6">📋 Copy command</button></div>
+<pre><code id="c6">npm start</code></pre>
+</div>
+<ul>
+<li>Wait for the messages indicating that MongoDB is connected and the server is running.</li>
+<li>Open <code>http://localhost:3000</code> in your browser.</li>
+<li>Enter an employee ID, name, and department, then click Add Employee.</li>
+<li>Use View Employees to view records and Delete to remove a record.</li>
+</ul>
+
+<h3>5. Important reminders</h3>
+<ul>
+<li>MongoDB must be running before you start the application.</li>
+<li>The database <code>EmployeeDB</code> and collection are created automatically by MongoDB/Mongoose when the first employee is saved.</li>
+<li>The <code>package-lock.json</code> example above is only a placeholder. Running <code>npm install</code> generates the complete lock file. Do not use this placeholder with <code>npm ci</code>.</li>
+<li>This lab uses a GET route for deletion to keep the demonstration simple. Production applications should use a DELETE request and appropriate protections.</li>
+</ul>
+</section>
+
+<a href="index.html" class="back">← Back to Home Page</a>
+</main>
+<script>
+document.querySelectorAll(".copy").forEach(button=>{
+    button.addEventListener("click",async()=>{
+        const text=document.getElementById(button.dataset.target).textContent;
+        try{
+            await navigator.clipboard.writeText(text);
+            button.textContent="✓ Copied!";
+        }catch(e){
+            const area=document.createElement("textarea");
+            area.value=text;document.body.appendChild(area);
+            area.select();
+            const ok=document.execCommand("copy");
+            area.remove();
+            button.textContent=ok?"✓ Copied!":"Copy failed";
+        }
+        setTimeout(()=>button.textContent=
+            button.dataset.target==="c5"?"📋 Copy commands":
+            button.dataset.target==="c6"?"📋 Copy command":
+            button.dataset.target==="c4"?"📋 Copy example":"📋 Copy code",1800);
+    });
+});
+</script>
+</body>
+</html>

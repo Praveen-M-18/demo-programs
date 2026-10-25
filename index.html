@@ -1,0 +1,373 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Lab Programs</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0b1120;
+            color: #f1f5f9;
+            min-height: 100vh;
+        }
+
+        header {
+            padding: 25px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #243047;
+            background: #0f172a;
+        }
+
+        .logo {
+            font-size: 23px;
+            font-weight: bold;
+            color: #60a5fa;
+        }
+
+        .header-tag {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 65px 20px 45px;
+        }
+
+        .hero-label {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 25px;
+            background: #172554;
+            color: #93c5fd;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: clamp(30px, 5vw, 48px);
+            margin-bottom: 16px;
+        }
+
+        .hero h1 span {
+            color: #60a5fa;
+        }
+
+        .hero p {
+            color: #94a3b8;
+            line-height: 1.7;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: auto;
+            padding: 20px 25px 60px;
+        }
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .section-heading h2 {
+            font-size: 23px;
+        }
+
+        .count {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 14px 16px;
+            margin-bottom: 25px;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            background: #111c30;
+            color: white;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .search-box:focus {
+            border-color: #60a5fa;
+        }
+
+        .program-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .program-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            padding: 25px;
+            background: #111c30;
+            border: 1px solid #26354d;
+            border-radius: 14px;
+            text-decoration: none;
+            color: inherit;
+            transition: 0.25s;
+        }
+
+        .program-card:hover {
+            transform: translateY(-4px);
+            border-color: #60a5fa;
+            background: #16243b;
+        }
+
+        .program-number {
+            min-width: 48px;
+            height: 48px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #1e3a5f;
+            color: #93c5fd;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .program-info {
+            flex: 1;
+        }
+
+        .program-info h3 {
+            font-size: 17px;
+            line-height: 1.5;
+            margin: 2px 0 12px;
+        }
+
+        .program-info p {
+            font-size: 13px;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+
+        .open-link {
+            display: inline-block;
+            margin-top: 18px;
+            color: #60a5fa;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .arrow {
+            color: #60a5fa;
+            font-size: 20px;
+        }
+
+        .no-results {
+            display: none;
+            color: #94a3b8;
+            text-align: center;
+            padding: 35px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            border-top: 1px solid #243047;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        @media (max-width: 650px) {
+            header {
+                padding: 20px;
+            }
+
+            .header-tag {
+                font-size: 12px;
+            }
+
+            .hero {
+                padding: 50px 20px 35px;
+            }
+
+            .container {
+                padding: 15px 18px 40px;
+            }
+
+            .program-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .program-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">⌘ Lab Programs</div>
+        <div class="header-tag">College Practical Portal</div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-label">✦ Your Coding Reference</div>
+        <h1>College Lab <span>Programs</span></h1>
+        <p>
+            All your lab programs in one place.
+            Explore the program list, open the code,
+            and find important execution notes.
+        </p>
+    </section>
+
+    <main class="container">
+        <div class="section-heading">
+            <h2>All Programs</h2>
+            <span class="count">08 Programs</span>
+        </div>
+
+        <input
+            type="text"
+            id="search"
+            class="search-box"
+            placeholder="Search programs by title or technology..."
+            aria-label="Search programs"
+        >
+
+        <div class="program-grid" id="programGrid">
+
+            <a class="program-card" href="program1.html">
+                <div class="program-number">01</div>
+                <div class="program-info">
+                    <h3>Image Slideshow using JavaScript</h3>
+                    <p>JavaScript · Image manipulation</p>
+                    <span class="open-link">View Program →</span>
+                </div>
+                <span class="arrow">↗</span>
+            </a>
+
+            <a class="program-card" href="program2.html">
+                <div class="program-number">02</div>
+                <div class="program-info">
+                    <h3>Electricity Bill Calculation using PHP</h3>
+                    <p>PHP · Bill calculation</p>
+                    <span class="open-link">View Program →</span>
+                </div>
+                <span class="arrow">↗</span>
+            </a>
+
+            <a class="program-card" href="program3.html">
+                <div class="program-number">03</div>
+                <div class="program-info">
+                    <h3>Web-Based Feedback System using PHP and MySQL</h3>
+                    <p>PHP · MySQL · Web application</p>
+                    <span class="open-link">View Program →</span>
+                </div>
+                <span class="arrow">↗</span>
+            </a>
+
+            <a class="program-card" href="program4.html">
+                <div class="program-number">04</div>
+                <div class="program-info">
+                    <h3>User Login using PHP and MySQL</h3>
+                    <p>PHP · MySQL · Authentication</p>
+                    <span class="open-link">View Program →</span>
+                </div>
+                <span class="arrow">↗</span>
+            </a>
+
+            <a class="program-card" href="program5.html">
+                <div class="program-number">05</div>
+                <div class="program-info">
+                    <h3>File Handling using Node.js</h3>
+                    <p>Node.js · File system</p>
+                    <span class="open-link">View Program →</span>
+                </div>
+                <span class="arrow">↗</span>
+            </a>
+
+            <a class="program-card" href="program6.html">
+                <div class="program-number">06</div>
+                <div class="program-info">
+                    <h3>Student Registration Form using Node.js and Express.js</h3>
+                    <p>Node.js · Express.js · Forms</p>
+                    <span class="open-link">View Program →</span>
+                </div>
+                <span class="arrow">↗</span>
+            </a>
+
+            <a class="program-card" href="program7.html">
+                <div class="program-number">07</div>
+                <div class="program-info">
+                    <h3>Employee Information Portal using Node.js, Express.js and MongoDB</h3>
+                    <p>Node.js · Express.js · MongoDB</p>
+                    <span class="open-link">View Program →</span>
+                </div>
+                <span class="arrow">↗</span>
+            </a>
+
+            <a class="program-card" href="program8.html">
+                <div class="program-number">08</div>
+                <div class="program-info">
+                    <h3>Git Repository: Basic Version Control Operations</h3>
+                    <p>Git · Version control</p>
+                    <span class="open-link">View Program →</span>
+                </div>
+                <span class="arrow">↗</span>
+            </a>
+
+        </div>
+
+        <div class="no-results" id="noResults">
+            No matching programs found.
+        </div>
+    </main>
+
+    <footer>
+        College Lab Programs · Learn, Practice, and Code
+    </footer>
+
+    <script>
+        const search = document.getElementById("search");
+        const cards = document.querySelectorAll(".program-card");
+        const noResults = document.getElementById("noResults");
+
+        search.addEventListener("input", function () {
+            const query = this.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            cards.forEach(function (card) {
+                const matches = card.textContent
+                    .toLowerCase()
+                    .includes(query);
+
+                card.style.display = matches ? "flex" : "none";
+
+                if (matches) visibleCount++;
+            });
+
+            noResults.style.display =
+                visibleCount === 0 ? "block" : "none";
+        });
+    </script>
+
+</body>
+</html>

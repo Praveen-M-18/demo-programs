@@ -1,0 +1,436 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Program 2 - Electricity Bill Calculation</title>
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0b1120;
+            color: #f1f5f9;
+            line-height: 1.6;
+        }
+
+        header {
+            padding: 22px 7%;
+            background: #0f172a;
+            border-bottom: 1px solid #26354d;
+        }
+
+        header a {
+            color: #60a5fa;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        main {
+            max-width: 950px;
+            margin: auto;
+            padding: 35px 20px 60px;
+        }
+
+        h1 {
+            font-size: clamp(25px, 4vw, 36px);
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            margin-bottom: 30px;
+        }
+
+        .file-section {
+            margin: 25px 0;
+            border: 1px solid #29384f;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #111c30;
+        }
+
+        .file-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            background: #17243a;
+            border-bottom: 1px solid #29384f;
+        }
+
+        .file-name {
+            font-weight: bold;
+            color: #bfdbfe;
+        }
+
+        .copy-btn {
+            padding: 8px 13px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .copy-btn:hover { background: #1d4ed8; }
+
+        pre {
+            margin: 0;
+            padding: 20px;
+            overflow-x: auto;
+            color: #dbeafe;
+            font: 13px/1.7 Consolas, Monaco, monospace;
+            white-space: pre;
+            tab-size: 4;
+        }
+
+        .notes {
+            margin-top: 35px;
+            padding: 24px;
+            border: 1px solid #36506f;
+            border-radius: 12px;
+            background: #111c30;
+        }
+
+        .notes h2 { color: #93c5fd; margin-top: 0; }
+
+        .notes h3 {
+            color: #bfdbfe;
+            margin-top: 22px;
+        }
+
+        .notes li {
+            margin: 10px 0;
+            color: #cbd5e1;
+        }
+
+        .notes code {
+            color: #93c5fd;
+            overflow-wrap: anywhere;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 16px;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #bfdbfe;
+            text-decoration: none;
+        }
+
+        .back-link:hover { background: #17243a; }
+
+        @media (max-width: 600px) {
+            main { padding: 25px 14px 45px; }
+            pre { padding: 14px; font-size: 12px; }
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <a href="index.html">← Back to All Programs</a>
+</header>
+
+<main>
+    <h1>02. Electricity Bill Calculation using PHP</h1>
+    <p class="subtitle">
+        Calculates electricity charges based on units consumed and displays a bill.
+    </p>
+
+    <section class="file-section">
+        <div class="file-header">
+            <span class="file-name">electricity.php</span>
+            <button class="copy-btn" data-copy="phpCode">📋 Copy code</button>
+        </div>
+
+        <pre><code id="phpCode">&lt;?php
+// Initialize variables
+$show_bill = false;
+$name = "";
+$units = "";
+$energy_charges = 0;
+$fixed_charges = 50.00;
+$total_amount = 0;
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $name = htmlspecialchars($_POST['consumer_name']);
+    $units = (int)$_POST['units'];
+
+    // Calculation Logic
+    // First 100 units @ ₹ 2.50
+    // Remaining units @ ₹ 3.50
+    if ($units <= 100) {
+        $energy_charges = $units * 2.50;
+    } else {
+        $energy_charges = (100 * 2.50) + (($units - 100) * 3.50);
+    }
+
+    $total_amount = $energy_charges + $fixed_charges;
+    $show_bill = true;
+}
+?&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Electricity Bill Generator&lt;/title&gt;
+    &lt;style&gt;
+        body {
+            background-color: #eaf5fa;
+            font-family: Arial, sans-serif;
+            color: #00334e;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 40px;
+            margin: 0;
+        }
+
+        h1 {
+            color: #003b5c;
+            margin-bottom: 30px;
+        }
+
+        .form-table { border-spacing: 0 15px; }
+
+        .form-table td { padding: 0 10px; }
+
+        .form-table label {
+            font-weight: bold;
+            color: #003b5c;
+        }
+
+        .form-table input {
+            padding: 8px;
+            border: 1px solid #a8c6d9;
+            border-radius: 3px;
+            width: 170px;
+            font-size: 14px;
+        }
+
+        .btn-container {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .submit-btn {
+            padding: 6px 15px;
+            background-color: #f7fbfc;
+            border: 1px solid #7094a8;
+            color: #003b5c;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .submit-btn:hover { background-color: #dbeaf1; }
+
+        .bill-container {
+            margin-top: 40px;
+            background-color: #ffffff;
+            border: 2px solid #1c4b66;
+            padding: 30px 40px;
+            width: min(420px, 94vw);
+            box-sizing: border-box;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .bill-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #003b5c;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid #cbd6dd;
+            margin: 15px 0;
+        }
+
+        .bill-details {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .bill-details td {
+            padding: 8px 0;
+            font-size: 15px;
+        }
+
+        .bill-details td:first-child {
+            font-weight: bold;
+            color: #003b5c;
+            width: 60%;
+        }
+
+        .bill-details td:last-child { color: #2c5973; }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 5px 0;
+            color: #922036;
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .footer-msg {
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+            color: #003b5c;
+            margin-top: 20px;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+    &lt;h1&gt;Electricity Bill Generator&lt;/h1&gt;
+
+    &lt;form method="POST" action=""&gt;
+        &lt;table class="form-table"&gt;
+            &lt;tr&gt;
+                &lt;td align="right"&gt;
+                    &lt;label for="consumer_name"&gt;Consumer Name&lt;/label&gt;
+                &lt;/td&gt;
+                &lt;td&gt;
+                    &lt;input type="text" id="consumer_name"
+                        name="consumer_name"
+                        value="&lt;?php echo htmlspecialchars($name); ?&gt;" required&gt;
+                &lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td align="right"&gt;
+                    &lt;label for="units"&gt;Units Consumed&lt;/label&gt;
+                &lt;/td&gt;
+                &lt;td&gt;
+                    &lt;input type="number" id="units" name="units"
+                        value="&lt;?php echo htmlspecialchars((string)$units); ?&gt;"
+                        required min="0"&gt;
+                &lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/table&gt;
+
+        &lt;div class="btn-container"&gt;
+            &lt;button type="submit" class="submit-btn"&gt;Generate Bill&lt;/button&gt;
+        &lt;/div&gt;
+    &lt;/form&gt;
+
+    &lt;?php if ($show_bill): ?&gt;
+    &lt;div class="bill-container"&gt;
+        &lt;div class="bill-title"&gt;TNEB ELECTRICITY BILL&lt;/div&gt;
+        &lt;hr&gt;
+
+        &lt;table class="bill-details"&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Consumer Name&lt;/td&gt;
+                &lt;td&gt;&lt;?php echo $name; ?&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Units Consumed&lt;/td&gt;
+                &lt;td&gt;&lt;?php echo $units; ?&gt; Units&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Energy Charges&lt;/td&gt;
+                &lt;td&gt;₹ &lt;?php echo number_format($energy_charges, 2); ?&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+                &lt;td&gt;Fixed Charges&lt;/td&gt;
+                &lt;td&gt;₹ &lt;?php echo number_format($fixed_charges, 2); ?&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+        &lt;/table&gt;
+
+        &lt;hr&gt;
+        &lt;div class="total-row"&gt;
+            &lt;span&gt;Total Bill Amount&lt;/span&gt;
+            &lt;span&gt;₹ &lt;?php echo number_format($total_amount, 2); ?&gt;&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;hr&gt;
+
+        &lt;div class="footer-msg"&gt;
+            Thank You - Pay Before Due Date
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;?php endif; ?&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+    </section>
+
+    <section class="notes">
+        <h2>📝 Important Notes — How to Run</h2>
+
+        <h3>1. Start XAMPP</h3>
+        <ul>
+            
+            <li>Open the XAMPP Control Panel.</li>
+            <li>Click <strong>Start</strong> next to apache</li>
+            <li>Make sure Apache starts successfully.</li>
+        </ul>
+
+        <h3>2. Save the PHP file</h3>
+        <ul>
+            <li>Open the XAMPP installation directory.</li>
+            <li>Go to the <code>htdocs</code> folder, usually <code>C:\xampp\htdocs</code> on Windows.</li>
+            <li>Create a folder named <code>ElectricityBill</code>.</li>
+            <li>Save the copied code inside it as <code>electricity.php</code>.</li>
+        </ul>
+
+        <h3>3. Run the program</h3>
+        <ul>
+            <li>Open Chrome or another web browser.</li>
+            <li>Enter <code>http://localhost/ElectricityBill/electricity.php</code> in the address bar.</li>
+            <li>Enter a consumer name and the number of units consumed.</li>
+            <li>Click <strong>Generate Bill</strong> to display the electricity bill.</li>
+        </ul>
+
+    </section>
+
+    <a href="index.html" class="back-link">← Back to Home Page</a>
+</main>
+
+<script>
+    document.querySelectorAll(".copy-btn").forEach(function (button) {
+        button.addEventListener("click", async function () {
+            const code = document.getElementById(
+                button.dataset.copy
+            ).textContent;
+
+            try {
+                await navigator.clipboard.writeText(code);
+                button.textContent = "✓ Copied!";
+            } catch (error) {
+                const textarea = document.createElement("textarea");
+                textarea.value = code;
+                textarea.style.position = "fixed";
+                textarea.style.opacity = "0";
+                document.body.appendChild(textarea);
+                textarea.select();
+
+                const copied = document.execCommand("copy");
+                textarea.remove();
+                button.textContent = copied ? "✓ Copied!" : "Copy failed";
+            }
+
+            setTimeout(function () {
+                button.textContent = "📋 Copy code";
+            }, 2000);
+        });
+    });
+</script>
+</body>
+</html>

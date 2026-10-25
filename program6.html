@@ -1,0 +1,267 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Program 6 - Student Registration Form</title>
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#0b1120;color:#f1f5f9;line-height:1.6}
+header{padding:22px 7%;background:#0f172a;border-bottom:1px solid #26354d}
+header a{color:#60a5fa;text-decoration:none;font-weight:bold}
+main{max-width:950px;margin:auto;padding:35px 20px 60px}
+h1{font-size:clamp(25px,4vw,36px);margin-bottom:8px}
+.subtitle{color:#94a3b8;margin-bottom:30px}
+.file-section{margin:25px 0;border:1px solid #29384f;border-radius:12px;overflow:hidden;background:#111c30}
+.file-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;background:#17243a;border-bottom:1px solid #29384f}
+.file-name{font-weight:bold;color:#bfdbfe}
+.copy-btn{padding:8px 13px;background:#2563eb;color:white;border:0;border-radius:7px;cursor:pointer;white-space:nowrap}
+.copy-btn:hover{background:#1d4ed8}
+pre{margin:0;padding:20px;overflow-x:auto;color:#dbeafe;font:13px/1.7 Consolas,monospace;white-space:pre;tab-size:2}
+.notes{margin-top:35px;padding:24px;border:1px solid #36506f;border-radius:12px;background:#111c30}
+.notes h2{color:#93c5fd;margin-top:0}
+.notes h3{color:#bfdbfe;margin-top:22px}
+.notes li{margin:10px 0;color:#cbd5e1}
+.notes code{color:#93c5fd;overflow-wrap:anywhere}
+.back-link{display:inline-block;margin-top:30px;padding:10px 16px;border:1px solid #334155;border-radius:8px;color:#bfdbfe;text-decoration:none}
+.back-link:hover{background:#17243a}
+@media(max-width:600px){main{padding:25px 14px 45px}pre{padding:14px;font-size:12px}}
+</style>
+</head>
+
+<body>
+<header><a href="index.html">← Back to All Programs</a></header>
+
+<main>
+<h1>06. Student Registration Form using Node.js and Express.js</h1>
+<p class="subtitle">Collect student details using an HTML form and process the submitted data with an Express.js server.</p>
+
+<section class="file-section">
+<div class="file-header">
+<span class="file-name">index.html</span>
+<button class="copy-btn" data-copy="code1">📋 Copy code</button>
+</div>
+<pre><code id="code1">&lt;!doctype html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8" /&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;
+    &lt;title&gt;Login Form&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Form&lt;/h1&gt;
+
+    &lt;form action="/login" method="post"&gt;
+      &lt;label for="name"&gt;Name:&lt;/label&gt;
+      &lt;input type="text" name="name" id="name"
+        placeholder="Enter your name" required /&gt;
+      &lt;br /&gt;&lt;br /&gt;
+
+      &lt;label for="rollno"&gt;Roll No:&lt;/label&gt;
+      &lt;input type="text" name="rollno" id="rollno"
+        placeholder="Enter your roll number" required /&gt;
+      &lt;br /&gt;&lt;br /&gt;
+
+      &lt;label for="department"&gt;Department:&lt;/label&gt;
+      &lt;input type="text" name="department" id="department"
+        placeholder="Enter your department" required /&gt;
+      &lt;br /&gt;&lt;br /&gt;
+
+      &lt;button type="submit"&gt;Submit&lt;/button&gt;
+    &lt;/form&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</section>
+
+<section class="file-section">
+<div class="file-header">
+<span class="file-name">backend.js</span>
+<button class="copy-btn" data-copy="code2">📋 Copy code</button>
+</div>
+<pre><code id="code2">const express = require("express");
+const app = express();
+
+app.use(express.urlencoded({ extended: true }));
+
+app.get("/", function (req, res) {
+  res.sendFile(__dirname + "/index.html");
+});
+
+app.post("/login", function (req, res) {
+  var name = req.body.name;
+  var rollno = req.body.rollno;
+  var department = req.body.department;
+
+  // Escape user input before displaying it as HTML.
+  function escapeHTML(value) {
+    return String(value).replace(/[&lt;&gt;&amp;"']/g, function (char) {
+      return {
+        "&lt;": "&amp;lt;",
+        "&gt;": "&amp;gt;",
+        "&amp;": "&amp;amp;",
+        '"': "&amp;quot;",
+        "'": "&amp;#39;"
+      }[char];
+    });
+  }
+
+  res.send(
+    "&lt;h1&gt;Name: " + escapeHTML(name) + "&lt;/h1&gt;" +
+    "&lt;p&gt;Roll No: " + escapeHTML(rollno) + "&lt;/p&gt;" +
+    "&lt;p&gt;Department: " + escapeHTML(department) + "&lt;/p&gt;"
+  );
+});
+
+app.listen(3000, function () {
+  console.log("Server Running on http://localhost:3000");
+});</code></pre>
+</section>
+
+<section class="file-section">
+<div class="file-header">
+<span class="file-name">package.json</span>
+<button class="copy-btn" data-copy="code3">📋 Copy code</button>
+</div>
+<pre><code id="code3">{
+  "name": "student-registration",
+  "version": "1.0.0",
+  "description": "Student Registration Form using Node.js and Express.js",
+  "main": "backend.js",
+  "scripts": {
+    "start": "node backend.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}</code></pre>
+</section>
+
+<section class="file-section">
+<div class="file-header">
+<span class="file-name">package-lock.json</span>
+<button class="copy-btn" data-copy="code4">📋 Copy code</button>
+</div>
+<pre><code id="code4">{
+  "name": "student-registration",
+  "version": "1.0.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {}
+}</code></pre>
+</section>
+
+<section class="notes">
+<h2>📝 Important Notes — How to Run</h2>
+
+<h3>1. Install Node.js</h3>
+<ul>
+<li>Download Node.js from <code>https://nodejs.org/</code> and install it if needed.</li>
+<li>Open Command Prompt or the VS Code terminal.</li>
+<li>Check the installation:</li>
+</ul>
+
+<div class="file-section">
+<div class="file-header">
+<span class="file-name">Terminal commands</span>
+<button class="copy-btn" data-copy="cmd1">📋 Copy commands</button>
+</div>
+<pre><code id="cmd1">node -v
+npm -v</code></pre>
+</div>
+
+<h3>2. Create the project folder</h3>
+<ul>
+<li>Create a folder named <code>StudentRegistration</code>.</li>
+<li>Save <code>index.html</code>, <code>backend.js</code>, and <code>package.json</code> inside it.</li>
+<li>You do not need to create <code>package-lock.json</code> manually. npm generates the complete lock file for your installed dependencies.</li>
+</ul>
+
+<h3>3. Install Express.js</h3>
+<ul>
+<li>Open a terminal inside the project folder.</li>
+<li>Run the following commands. The install command creates or updates <code>package-lock.json</code>.</li>
+</ul>
+
+<div class="file-section">
+<div class="file-header">
+<span class="file-name">Install dependencies --copy and paste one by one--</span>
+<button class="copy-btn" data-copy="cmd2">📋 Copy commands</button>
+</div>
+<pre><code id="cmd2">npm install
+npm ls express</code>
+</pre>
+if above commands does not work<br>
+alternative commands:
+<pre><code id="cmd2">npm.cmd install
+    npm.cmd ls express
+    npm.cmd start</code>
+    </pre>
+</div>
+
+<h3>4. Run the server</h3>
+<div class="file-section">
+<div class="file-header">
+<span class="file-name">Start command</span>
+<button class="copy-btn" data-copy="cmd3">📋 Copy command</button>
+</div>
+<pre><code id="cmd3">npm start</code></pre>
+</div>
+
+<ul>
+<li>Wait for the message <code>Server Running on http://localhost:3000</code>.</li>
+<li>Open <code>http://localhost:3000</code> in your browser.</li>
+<li>Enter the student name, roll number, and department.</li>
+<li>Click Submit. The server displays the submitted details.</li>
+</ul>
+
+<h3>5. Important reminders</h3>
+<ul>
+<li>Keep the terminal open while using the application.</li>
+<li>To stop the server, press <code>Ctrl + C</code> in the terminal.</li>
+<li>This program displays the submitted information; it does not save student records in a database.</li>
+<li>The form action <code>/login</code> must match the Express POST route.</li>
+<li>The <code>package-lock.json</code> shown above is only a placeholder. Running <code>npm install</code> generates the complete lock file, including Express and its dependencies. Do not use the placeholder with <code>npm ci</code>.</li>
+</ul>
+</section>
+
+<a href="index.html" class="back-link">← Back to Home Page</a>
+</main>
+
+<script>
+document.querySelectorAll(".copy-btn").forEach(function(button) {
+  button.addEventListener("click", async function() {
+    const code = document.getElementById(button.dataset.copy).textContent;
+
+    try {
+      await navigator.clipboard.writeText(code);
+      button.textContent = "✓ Copied!";
+    } catch (error) {
+      const textarea = document.createElement("textarea");
+      textarea.value = code;
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      const copied = document.execCommand("copy");
+      textarea.remove();
+      button.textContent = copied ? "✓ Copied!" : "Copy failed";
+    }
+
+    setTimeout(function() {
+      button.textContent = "📋 Copy " + ({
+        code1: "code",
+        code2: "code",
+        code3: "code",
+        code4: "JSON example",
+        cmd1: "commands",
+        cmd2: "commands",
+        cmd3: "command"
+      }[button.dataset.copy] || "code");
+    }, 2000);
+  });
+});
+</script>
+</body>
+</html>

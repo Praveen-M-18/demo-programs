@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Program 5 - File Handling using Node.js</title>
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#0b1120;color:#f1f5f9;line-height:1.6}
+header{padding:22px 7%;background:#0f172a;border-bottom:1px solid #26354d}
+header a{color:#60a5fa;text-decoration:none;font-weight:bold}
+main{max-width:950px;margin:auto;padding:35px 20px 60px}
+h1{font-size:clamp(25px,4vw,36px);margin-bottom:8px}
+.subtitle{color:#94a3b8;margin-bottom:30px}
+.file-section{margin:25px 0;border:1px solid #29384f;border-radius:12px;overflow:hidden;background:#111c30}
+.file-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;background:#17243a;border-bottom:1px solid #29384f}
+.file-name{font-weight:bold;color:#bfdbfe}
+.copy-btn{padding:8px 13px;background:#2563eb;color:white;border:0;border-radius:7px;cursor:pointer}
+.copy-btn:hover{background:#1d4ed8}
+pre{margin:0;padding:20px;overflow-x:auto;color:#dbeafe;font:13px/1.7 Consolas,monospace;white-space:pre;tab-size:4}
+.notes{margin-top:35px;padding:24px;border:1px solid #36506f;border-radius:12px;background:#111c30}
+.notes h2{color:#93c5fd;margin-top:0}
+.notes h3{color:#bfdbfe;margin-top:22px}
+.notes li{margin:10px 0;color:#cbd5e1}
+.notes code{color:#93c5fd;overflow-wrap:anywhere}
+.back-link{display:inline-block;margin-top:30px;padding:10px 16px;border:1px solid #334155;border-radius:8px;color:#bfdbfe;text-decoration:none}
+.back-link:hover{background:#17243a}
+@media(max-width:600px){main{padding:25px 14px 45px}pre{padding:14px;font-size:12px}}
+</style>
+</head>
+
+<body>
+<header><a href="index.html">← Back to All Programs</a></header>
+
+<main>
+<h1>05. File Handling using Node.js</h1>
+<p class="subtitle">Creates a text file, writes employee information, and reads the file using Node.js.</p>
+
+<section class="file-section">
+<div class="file-header">
+<span class="file-name">app.js</span>
+<button class="copy-btn" data-copy="jsCode">📋 Copy code</button>
+</div>
+<pre><code id="jsCode">const fs = require("fs");
+
+const filename = "sample.txt";
+
+const data = `
+Employee Name: Batman
+Employee ID: 12345
+`;
+
+fs.writeFile(filename, data, function (err) {
+  if (err) {
+    console.log(err);
+  } else {
+    console.log("File created");
+
+    fs.readFile(filename, function (err, content) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(content);
+      }
+    });
+  }
+  console.log(data);
+});</code></pre>
+</section>
+
+<section class="notes">
+<h2>📝 Important Notes — How to Run</h2>
+
+<h3>1. Install Node.js</h3>
+<ul><li>Node is needed to run this program</li>
+
+
+<li>Check the installation by running these commands.</li>
+<li>Download and install Node.js from <code>https://nodejs.org/</code> if it is not already installed.</li>
+</ul>
+
+<div class="file-section">
+<div class="file-header">
+<span class="file-name">Terminal commands</span>
+<button class="copy-btn" data-copy="terminal1">📋 Copy commands</button>
+</div>
+<pre><code id="terminal1">node -v
+npm -v</code></pre>
+</div>
+
+<h3>2. Create the project</h3>
+<ul>
+<li>Create a folder named <code>FileHandling</code>.</li>
+<li>Open the folder in VS Code or navigate to it using the terminal.</li>
+<li>Create a file named <code>app.js</code> and paste the program code into it.</li>
+<li>No external packages are required because <code>fs</code> is a built-in Node.js module.</li>
+</ul>
+
+<h3>3. Run the program</h3>
+<ul>
+<li>Open a terminal in the project folder.</li>
+<li>Execute the following command.</li>
+</ul>
+
+<div class="file-section">
+<div class="file-header">
+<span class="file-name">Run command</span>
+<button class="copy-btn" data-copy="terminal2">📋 Copy command</button>
+</div>
+<pre><code id="terminal2">node app.js</code></pre>
+</div>
+
+<h3>4. Expected output</h3>
+<div class="file-section">
+<div class="file-header">
+<span class="file-name">Console output (illustrative)</span>
+</div>
+<pre><code>File created
+
+Employee Name: Batman
+Employee ID: 12345
+
+[Buffer containing the file contents]</code></pre>
+</div>
+
+<ul>
+<li>The exact output order may vary because the file operations use asynchronous callbacks.</li>
+<li><code>fs.writeFile()</code> creates the file and writes the employee details.</li>
+<li><code>fs.readFile()</code> reads the file after writing completes.</li>
+<li>The file <code>sample.txt</code> is created in the current working directory from which you run the command.</li>
+<li>The read operation returns a Buffer by default. To display readable text instead, use <code>fs.readFile(filename, "utf8", callback)</code>.</li>
+</ul>
+</section>
+
+<a href="index.html" class="back-link">← Back to Home Page</a>
+</main>
+
+<script>
+document.querySelectorAll(".copy-btn").forEach(function(button) {
+    button.addEventListener("click", async function() {
+        const code = document.getElementById(button.dataset.copy).textContent;
+
+        try {
+            await navigator.clipboard.writeText(code);
+            button.textContent = "✓ Copied!";
+        } catch (error) {
+            const textarea = document.createElement("textarea");
+            textarea.value = code;
+            textarea.style.position = "fixed";
+            textarea.style.opacity = "0";
+            document.body.appendChild(textarea);
+            textarea.select();
+
+            const copied = document.execCommand("copy");
+            textarea.remove();
+            button.textContent = copied ? "✓ Copied!" : "Copy failed";
+        }
+
+        setTimeout(function() {
+            const original = {
+                jsCode: "📋 Copy code",
+                terminal1: "📋 Copy commands",
+                terminal2: "📋 Copy command"
+            };
+            button.textContent = original[button.dataset.copy] || "📋 Copy code";
+        }, 2000);
+    });
+});
+</script>
+</body>
+</html>
